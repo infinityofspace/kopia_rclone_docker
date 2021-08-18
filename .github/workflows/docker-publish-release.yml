@@ -1,0 +1,47 @@
+name: build and publish release to Github container registry
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get the tag name
+        id: get_tag
+        run: echo ::set-output name=TAG::$(echo $GITHUB_REF | cut -d / -f 3)
+
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: login to Github container registry
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: build the image and push to Github container registry
+        run: |
+          docker buildx build \
+            --push \
+            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:nightly \
+            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:latest \
+            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:${{ steps.get_tag.outputs.TAG }} \
+            --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
+            .
+
+      - name: build the noui image and push to Github container registry
+        run: |
+          docker buildx build \
+            --push \
+            --build-arg BUILD_TYPE=noui \
+            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:nightly-noui \
+            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:latest-noui \
+            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:${{ steps.get_tag.outputs.TAG }}-noui \
+            --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
+            .
