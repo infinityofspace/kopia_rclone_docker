@@ -1,4 +1,4 @@
-name: build and publish release to Github container registry
+name: release build
 
 on:
   push:

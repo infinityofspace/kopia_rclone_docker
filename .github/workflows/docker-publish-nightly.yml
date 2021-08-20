@@ -1,4 +1,4 @@
-name: build and publish nightly to Github container registry
+name: nightly build
 
 on:
   schedule:
