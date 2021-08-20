@@ -1,13 +1,10 @@
-FROM golang:1.17-alpine3.14 AS build-image
-
-RUN apk add git gcc musl-dev make curl nodejs binutils-gold
+FROM golang:1.17-bullseye AS build-image
 
 # build rclone
-
 ARG RCLONE_BRANCH=v1.56.0
 
 RUN git clone --depth 1 --branch $RCLONE_BRANCH https://github.com/rclone/rclone.git
-RUN cd rclone && go build
+RUN cd rclone && go build -ldflags "-linkmode external -extldflags -static"
 
 # build kopia
 ARG KOPIA_BRANCH=v0.8.4
@@ -16,11 +13,9 @@ RUN git clone --depth 1 --branch $KOPIA_BRANCH https://github.com/kopia/kopia.gi
 
 ARG KOPIA_BUILD_TYPE
 
-RUN if [ "$KOPIA_BUILD_TYPE" == "noui" ]; then \
-      cd kopia && make install-noui; \
-    else \
-      cd kopia && make install; \
-    fi
+COPY build_kopia.sh kopia/build_kopia.sh
+RUN chmod +x kopia/build_kopia.sh
+RUN cd kopia && ./build_kopia.sh
 
 
 FROM alpine:3.14
