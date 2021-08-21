@@ -1,8 +1,8 @@
-name: nightly build
+name: weeekly build
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * SUN'
 
 jobs:
   build:
@@ -36,7 +36,7 @@ jobs:
             --push \
             --build-arg RCLONE_BRANCH=master \
             --build-arg KOPIA_BRANCH=master \
-            --build-arg BUILD_TYPE=noui \
+            --build-arg KOPIA_BUILD_TYPE=noui \
             --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:nightly-noui \
             --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
             .

@@ -4,7 +4,8 @@ Docker image with kopia and rclone
 
 ---
 
-[![release builds](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-release.yml/badge.svg)](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-release.yml)
+[![release build](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-release.yml/badge.svg)](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-release.yml)
+[![weekly build](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-weekly.yml/badge.svg)](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-weekly.yml)
 
 ---
 
@@ -34,15 +35,13 @@ The following table contains the version information of the included kopia and r
 
 | image version           | kopia version | rclone version |
 |:-----------------------:|:-------------:|:--------------:|
-| 0.1 / latest            | v0.8.4        | v1.56.0        |
-| 0.1-noui / latest-noui  | v0.8.4        | v1.56.0        |
-| nightly                 | -             | -              |
-| nightly-noui            | -             | -              |
+| weekly                 | -             | -              |
+| weekly-noui            | -             | -              |
 
 The `*-noui` tags are kopia builds without the web ui of the kopia server.
 
-*Note: The tag nightly is not intended for productive use, as it automatically builds the image with the changes of the
-respective master branches every night.*
+*Note: The `weekly` tag is not intended for productive use, as it automatically builds the image with the changes of the
+respective master branches every sunday at 0 o'clock.*
 
 ### Supported architectures
 
@@ -227,12 +226,12 @@ docker image with a full kopia server version. This version includes the web gui
 docker build -t kopia_rclone_docker .
 ```
 
-If you don't need the web gui of kopia server, then you can specify this with the build argument `BUILD_TYPE=noui` and
-kopia will be built without the web gui:
+If you don't need the web gui of kopia server, then you can specify this with the build argument `KOPIA_BUILD_TYPE=noui`
+and kopia will be built without the web gui:
 
 ```commandline
 docker build \
-    --build-arg BUILD_TYPE=noui \
+    --build-arg KOPIA_BUILD_TYPE=noui \
     -t kopia_rclone_docker \
     .
 ```
@@ -242,7 +241,7 @@ variables `RCLONE_BRANCH` and `KOPIA_BRANCH` respectively:
 
 ```commandline
 docker build \
-    --build-arg BUILD_TYPE=noui \
+    --build-arg KOPIA_BUILD_TYPE=noui \
     --build-arg RCLONE_BRANCH=v1.56.0 \
     --build-arg KOPIA_BRANCH=v0.8.4 \
     -t kopia_rclone_docker \
