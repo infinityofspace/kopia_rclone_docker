@@ -29,7 +29,6 @@ jobs:
         run: |
           docker buildx build \
             --push \
-            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:nightly \
             --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:latest \
             --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:${{ steps.get_tag.outputs.TAG }} \
             --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
@@ -40,7 +39,6 @@ jobs:
           docker buildx build \
             --push \
             --build-arg KOPIA_BUILD_TYPE=noui \
-            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:nightly-noui \
             --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:latest-noui \
             --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:${{ steps.get_tag.outputs.TAG }}-noui \
             --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
