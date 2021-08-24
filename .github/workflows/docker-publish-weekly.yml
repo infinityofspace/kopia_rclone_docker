@@ -26,7 +26,7 @@ jobs:
             --push \
             --build-arg RCLONE_BRANCH=master \
             --build-arg KOPIA_BRANCH=master \
-            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:nightly \
+            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:weekly \
             --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
             .
 
@@ -37,6 +37,6 @@ jobs:
             --build-arg RCLONE_BRANCH=master \
             --build-arg KOPIA_BRANCH=master \
             --build-arg KOPIA_BUILD_TYPE=noui \
-            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:nightly-noui \
+            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:weekly-noui \
             --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
             .
