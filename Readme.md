@@ -35,8 +35,8 @@ The following table contains the version information of the included kopia and r
 
 | image version           | kopia version | rclone version |
 |:-----------------------:|:-------------:|:--------------:|
-| 0.2, latest             | -             | -              |
-| 0.2-noui, latest-noui   | -             | -              |
+| 0.2, latest             | v0.8.4        | v1.56.0        |
+| 0.2-noui, latest-noui   | v0.8.4        | v1.56.0        |
 | weekly                  | -             | -              |
 | weekly-noui             | -             | -              |
 
