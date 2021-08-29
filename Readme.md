@@ -35,8 +35,10 @@ The following table contains the version information of the included kopia and r
 
 | image version           | kopia version | rclone version |
 |:-----------------------:|:-------------:|:--------------:|
-| weekly                 | -             | -              |
-| weekly-noui            | -             | -              |
+| 0.2, latest             | -             | -              |
+| 0.2-noui, latest-noui   | -             | -              |
+| weekly                  | -             | -              |
+| weekly-noui             | -             | -              |
 
 The `*-noui` tags are kopia builds without the web ui of the kopia server.
 
