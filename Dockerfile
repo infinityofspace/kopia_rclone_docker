@@ -1,13 +1,13 @@
 FROM golang:1.17-bullseye AS build-image
 
 # build rclone
-ARG RCLONE_BRANCH=v1.56.0
+ARG RCLONE_BRANCH=v1.57.0
 
 RUN git clone --depth 1 --branch $RCLONE_BRANCH https://github.com/rclone/rclone.git
 RUN cd rclone && go build -ldflags "-linkmode external -extldflags -static"
 
 # build kopia
-ARG KOPIA_BRANCH=v0.8.4
+ARG KOPIA_BRANCH=v0.9.5
 
 RUN git clone --depth 1 --branch $KOPIA_BRANCH https://github.com/kopia/kopia.git
 
