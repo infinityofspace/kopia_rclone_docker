@@ -7,7 +7,7 @@ RUN git clone --depth 1 --branch $RCLONE_BRANCH https://github.com/rclone/rclone
 RUN cd rclone && go build -ldflags "-linkmode external -extldflags -static"
 
 # build kopia
-ARG KOPIA_BRANCH=v0.9.5
+ARG KOPIA_BRANCH=v0.9.6
 
 RUN git clone --depth 1 --branch $KOPIA_BRANCH https://github.com/kopia/kopia.git
 
