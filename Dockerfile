@@ -4,7 +4,7 @@ FROM golang:1.17-bullseye AS build-image
 ARG RCLONE_BRANCH=v1.57.0
 
 RUN git clone --depth 1 --branch $RCLONE_BRANCH https://github.com/rclone/rclone.git
-RUN cd rclone && go build -ldflags "-linkmode external -extldflags -static"
+RUN cd rclone && CGO_ENABLED=0 make
 
 # build kopia
 ARG KOPIA_BRANCH=v0.9.6
