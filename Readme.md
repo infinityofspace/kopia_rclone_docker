@@ -33,14 +33,16 @@ in one of the cloud storage systems supported by rclone.
 
 The following table contains the version information of the included kopia and rlcone for each image version/tag:
 
-| image version           | kopia version | rclone version |
+|      image version      | kopia version | rclone version |
 |:-----------------------:|:-------------:|:--------------:|
-| 0.3, *latest*           | v0.9.5        | v1.57.0        |
-| 0.3-noui, *latest-noui* | v0.9.5        | v1.57.0        |
-| 0.2                     | v0.8.4        | v1.56.0        |
-| 0.2-noui                | v0.8.4        | v1.56.0        |
-| weekly                  | -             | -              |
-| weekly-noui             | -             | -              |
+|     0.4, *latest*,      |    v0.10.4    |    v1.57.0     |
+| 0.4-noui, *latest-noui* |    v0.10.4    |    v1.57.0     |
+|           0.3           |    v0.9.5     |    v1.57.0     |
+|        0.3-noui         |    v0.9.5     |    v1.57.0     |
+|           0.2           |    v0.8.4     |    v1.56.0     |
+|        0.2-noui         |    v0.8.4     |    v1.56.0     |
+|         weekly          |       -       |       -        |
+|       weekly-noui       |       -       |       -        |
 
 The `*-noui` tags are kopia builds without the web ui of the kopia server.
 
