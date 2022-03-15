@@ -6,6 +6,7 @@ Docker image with kopia and rclone
 
 [![release build](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-release.yml/badge.svg)](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-release.yml)
 [![weekly build](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-weekly.yml/badge.svg)](https://github.com/infinityofspace/kopia_rclone_docker/actions/workflows/docker-publish-weekly.yml)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/infinityofspace/kopia_rclone_docker?include_prereleases&label=lastest%20version&style=plastic)](https://github.com/infinityofspace/kopia_rclone_docker/releases)
 
 ---
 
@@ -31,35 +32,8 @@ in one of the cloud storage systems supported by rclone.
 
 ## Versions
 
-The following table contains the version information of the included kopia and rlcone for each image version/tag:
-
-|      image version      | kopia version | rclone version |
-|:-----------------------:|:-------------:|:--------------:|
-|     0.5, *latest*,      |    v0.10.4    |    v1.57.0     |
-| 0.5-noui, *latest-noui* |    v0.10.4    |    v1.57.0     |
-|         0.4.1,          |    v0.9.6     |    v1.57.0     |
-|       0.4.1-noui        |    v0.9.6     |    v1.57.0     |
-|           0.4           |    v0.9.6     |    v1.57.0     |
-|        0.4-noui         |    v0.9.6     |    v1.57.0     |
-|           0.3           |    v0.9.5     |    v1.57.0     |
-|        0.3-noui         |    v0.9.5     |    v1.57.0     |
-|           0.2           |    v0.8.4     |    v1.56.0     |
-|        0.2-noui         |    v0.8.4     |    v1.56.0     |
-|         weekly          |       -       |       -        |
-|       weekly-noui       |       -       |       -        |
-
-The `*-noui` tags are kopia builds without the web ui of the kopia server.
-
-*Note: The `weekly` tag is not intended for productive use, as it automatically builds the image with the changes of the
-respective master branches every sunday at 0 o'clock.*
-
-### Supported architectures
-
-Images are created for the following architectures:
-
-- amd64
-- arm64/v8
-- arm/v7
+You can find detailed information about the supported versions of kopia and rclone in
+the [versions' wiki](https://github.com/infinityofspace/kopia_rclone_docker/wiki/versions).
 
 ## Usage
 
