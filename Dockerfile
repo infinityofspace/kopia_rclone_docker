@@ -7,7 +7,7 @@ RUN git clone --depth 1 --branch $RCLONE_BRANCH https://github.com/rclone/rclone
 RUN cd rclone && CGO_ENABLED=0 make
 
 # build kopia
-ARG KOPIA_BRANCH=v0.10.4
+ARG KOPIA_BRANCH=v0.10.6
 
 RUN git clone --depth 1 --branch $KOPIA_BRANCH https://github.com/kopia/kopia.git
 
@@ -18,7 +18,7 @@ RUN chmod +x kopia/build_kopia.sh
 RUN cd kopia && ./build_kopia.sh
 
 
-FROM alpine:3.14
+FROM alpine:3.15
 
 COPY --from=build-image /go/rclone/rclone /usr/bin/
 COPY --from=build-image /go/bin/kopia /usr/bin/
