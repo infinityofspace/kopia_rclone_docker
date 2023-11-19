@@ -17,26 +17,38 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: login to Github container registry
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GH_USERNAME }}
+          password: ${{ secrets.GH_TOKEN }}
 
-      - name: build the image and push to Github container registry
-        run: |
-          docker buildx build \
-            --push \
-            --build-arg RCLONE_BRANCH=master \
-            --build-arg KOPIA_BRANCH=master \
-            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:weekly \
-            --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
-            .
+      - name: Build and push with ui
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: |
+            ghcr.io/${{ secrets.GH_USERNAME }}/kopia_rclone_docker:weekly
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: Dockerfile
+          build-args: |
+            RCLONE_BRANCH=master
+            KOPIA_BRANCH=master
 
-      - name: build the no ui image and push to Github container registry
-        run: |
-          docker buildx build \
-            --push \
-            --build-arg RCLONE_BRANCH=master \
-            --build-arg KOPIA_BRANCH=master \
-            --build-arg KOPIA_BUILD_TYPE=noui \
-            --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/kopia_rclone_docker:weekly-noui \
-            --platform linux/amd64,linux/arm64/v8,linux/arm/v7 \
-            .
+      - name: Build and push without ui
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: |
+            ghcr.io/${{ secrets.GH_USERNAME }}/kopia_rclone_docker:weekly-noui
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: Dockerfile
+          build-args: |
+            RCLONE_BRANCH=master
+            KOPIA_BRANCH=master
+            KOPIA_BUILD_TYPE=noui
