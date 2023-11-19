@@ -1,4 +1,4 @@
-FROM golang:1.17-bullseye AS build-image
+FROM golang:1.21-bullseye AS build-image
 
 # build rclone
 ARG RCLONE_BRANCH=v1.64.2
