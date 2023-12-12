@@ -188,6 +188,114 @@ docker run \
       --keep-annual 12
 ```
 
+#### Backup Docker volumes
+
+The following example describes the backup of any Docker volume.
+Advantages of the backup with kopia and rclone:
+- end to end encrypted backup
+- duplicate the backup with kopia repository [synchronization](https://kopia.io/docs/advanced/synchronization/)
+- incremental backups
+- send backup to remote storage (this means that if local storage space is limited, complete backups that require more storage than is available locally are still possible)
+
+Before we get started, we need to customise the image. We need to add `curl` to the base image, which we need to interact with the Docker socket.
+For this purpose, create the file `Dockerfile` with the following content:
+```Dockerfile
+FROM ghcr.io/infinityofspace/kopia_rclone_docker:latest
+
+RUN apk add --no-cache curl
+```
+
+In the next step, create the `docker-compose.yml` file with the following content:
+```docker-compose
+version: "3"
+
+    services:
+        kopia:
+            build: .
+            restart: unless-stopped
+            ports:
+                - 127.0.0.1:8080:8080
+            environment:
+                - KOPIA_PERSIST_CREDENTIALS_ON_CONNECT=true
+            volumes:
+                - kopia_config:/kopia/config
+                - kopia_logs:/kopia/logs
+
+                # rclone config folder
+                - ./rclone_config:/rclone
+                # custom docker container shutdown and startup scripts folder
+                - ./scripts:/scripts
+
+                # rootless docker socket location
+                - "$XDG_RUNTIME_DIR/docker.sock:/var/run/docker.sock"
+                # uncomment the next line when you use a rootfull docker socket location
+                # - /var/run/docker.sock:/var/run/docker.sock
+
+                # all volumes which should be backed up
+                - volume1:/volumes/volume1:ro
+            command:
+                - kopia
+                - server
+                - start
+                - --insecure
+                - --address=0.0.0.0:8080
+                - --server-username=${USER}
+                - --server-password=${KOPIA_PASSWORD}
+
+volumes:
+    kopia_config:
+    kopia_logs:
+    volume1:
+        external: true
+```
+
+The service `kopia` is defined in the docker compose file, which offers a web UI for creating and managing backups.
+This Web UI can be accessed at the address `http://localhost:8080`.
+
+However, before you start the docker compose service, you must first create scripts for the shutdown and start docker container that use the desired volume.
+Create the container shutdown and restart scripts in a folder called `scripts` next to the docker compose file (the name of the container is in this example `container_service1`):
+
+Shutdown script:
+```bash
+#!/bin/sh
+
+curl --unix-socket /var/run/docker.sock -X POST http:/v1.24/containers/container_service1/stop
+```
+Start script:
+```bash
+#!/bin/sh
+
+curl --unix-socket /var/run/docker.sock -X POST http:/v1.24/containers/container_service1/start
+```
+
+You can name these as you wish, in this example the file is named `container_service1-shutdown.sh` for the shutdown and `container_service1-start.sh` for the start script.
+After you have created the scripts, you still have to make them executable. This is possible under common Unix systems with this command:
+```commandline
+chmod -x scripts/*
+```
+
+The last preparation step is to define the kopia user and password. This is done using the following `.env` file:
+```
+USER=
+KOPIA_PASSWORD=
+```
+
+Finally, start the kopia docker service with the command:
+```commandline
+docker compose up -d
+```
+
+---
+
+Now open the address `http://localhost:8080` of the Web UI in a web browser. At the first start, set up the kopia repository and select `rclone` as the provider.
+Also make sure the config file is set to `/kopia/config/repository.config`. In the next step, we set up the backup of volume `volume1` by entering the path `/volumes/volume1` of
+volume `volume1` of the container under the menu item `Policies` in the input field `enter directory to find or set policy` and creating the policy with the button `Set Policy`.
+To stop the container in the backup process so that no unstable data state of the backup occurs, we must now set up the shutdown and start scripts in the previously
+created policy. To do this, use the `Edit` button of the corresponding policy in the `Policies` menu item. Now enter the script path `container_service1-shutdown.sh` in
+the `Before Snapshot` entry of the `Snapshot Action` menu. For the entry `After Snapshot` enter `container_service1-start.sh` and save the policy with the `Save Policy` button.
+
+At this point, the Docker volume `volume1` can be backed up. Ideally, set up a scheduled backup in the policy for the path so that a backup is performed automatically.
+
 ## Build locally
 
 Before you create the image you must first clone the repo:
