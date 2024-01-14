@@ -18,7 +18,7 @@ RUN chmod +x kopia/build_kopia.sh
 RUN cd kopia && ./build_kopia.sh
 
 
-FROM alpine:3.18
+FROM alpine:3.19
 
 COPY --from=build-image /go/rclone/rclone /usr/bin/
 COPY --from=build-image /go/bin/kopia /usr/bin/
