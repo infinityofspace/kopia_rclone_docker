@@ -25,7 +25,7 @@ jobs:
           password: ${{ secrets.GH_TOKEN }}
 
       - name: Build and push with ui
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
@@ -39,7 +39,7 @@ jobs:
             KOPIA_BRANCH=master
 
       - name: Build and push without ui
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
