@@ -75,7 +75,7 @@ docker run \
     -v $(pwd)/kopia_cmds.sh:/kopia_cmds.sh \
     -e KOPIA_PASSWORD=mysecretpassword \
     ghcr.io/infinityofspace/kopia_rclone_docker:latest \
-        /kopia_cmds.sh 
+        /kopia_cmds.sh
 ```
 
 To store the kopia configuration independently of a docker container you can use docker volumes. The kopia configuration
@@ -197,51 +197,52 @@ Advantages of the backup with kopia and rclone:
 - incremental backups
 - send backup to remote storage (this means that if local storage space is limited, complete backups that require more storage than is available locally are still possible)
 
-Before we get started, we need to customise the image. We need to add `curl` to the base image, which we need to interact with the Docker socket.
+#### Docker standalone
+
+The following example describes the backup of a Docker volume with kopia and rclone in a standalone Docker installation.
+
+Before we get started, we need to customise the image. We need to add `docker-cli` to the base image, which we need to interact with the Docker socket.
 For this purpose, create the file `Dockerfile` with the following content:
 ```Dockerfile
 FROM ghcr.io/infinityofspace/kopia_rclone_docker:latest
 
-RUN apk add --no-cache curl
+RUN apk add --no-cache docker-cli
 ```
 
 In the next step, create the `docker-compose.yml` file with the following content:
 ```docker-compose
-version: "3"
+services:
+    kopia:
+      build: .
+      restart: unless-stopped
+      ports:
+          - 127.0.0.1:8080:8080
+      environment:
+          - KOPIA_PERSIST_CREDENTIALS_ON_CONNECT=true
+      volumes:
+          - kopia_config:/kopia/config
+          - kopia_logs:/kopia/logs
 
-    services:
-        kopia:
-            build: .
-            restart: unless-stopped
-            ports:
-                - 127.0.0.1:8080:8080
-            environment:
-                - KOPIA_PERSIST_CREDENTIALS_ON_CONNECT=true
-            volumes:
-                - kopia_config:/kopia/config
-                - kopia_logs:/kopia/logs
+          # rclone config folder
+          - ./rclone_config:/rclone
+          # custom docker container shutdown and startup scripts folder
+          - ./scripts:/scripts
 
-                # rclone config folder
-                - ./rclone_config:/rclone
-                # custom docker container shutdown and startup scripts folder
-                - ./scripts:/scripts
+          # rootless docker socket location
+          - "$XDG_RUNTIME_DIR/docker.sock:/var/run/docker.sock"
+          # uncomment the next line when you use a rootfull docker socket location
+          # - /var/run/docker.sock:/var/run/docker.sock
 
-                # rootless docker socket location
-                - "$XDG_RUNTIME_DIR/docker.sock:/var/run/docker.sock"
-                # uncomment the next line when you use a rootfull docker socket location
-                # - /var/run/docker.sock:/var/run/docker.sock
-
-                # all volumes which should be backed up
-                - volume1:/volumes/volume1:ro
-            command:
-                - kopia
-                - server
-                - start
-                - --insecure
-                - --address=0.0.0.0:8080
-                - --server-username=${USER}
-                - --server-password=${KOPIA_PASSWORD}
-
+          # all volumes which should be backed up
+          - volume1:/volumes/volume1:ro
+        command:
+          - kopia
+          - server
+          - start
+          - --insecure
+          - --address=0.0.0.0:8080
+          - --server-username=${USER}
+          - --server-password=${KOPIA_PASSWORD}
 volumes:
     kopia_config:
     kopia_logs:
@@ -259,16 +260,16 @@ Shutdown script:
 ```bash
 #!/bin/sh
 
-curl --unix-socket /var/run/docker.sock -X POST http:/v1.24/containers/container_service1/stop
+docker stop $1
 ```
 Start script:
 ```bash
 #!/bin/sh
 
-curl --unix-socket /var/run/docker.sock -X POST http:/v1.24/containers/container_service1/start
+docker start $1
 ```
 
-You can name these as you wish, in this example the file is named `container_service1-shutdown.sh` for the shutdown and `container_service1-start.sh` for the start script.
+Savethe shutdown and start scripts in the `scripts` folder.
 After you have created the scripts, you still have to make them executable. This is possible under common Unix systems with this command:
 ```commandline
 chmod -x scripts/*
@@ -291,8 +292,8 @@ Now open the address `http://localhost:8080` of the Web UI in a web browser. At 
 Also make sure the config file is set to `/kopia/config/repository.config`. In the next step, we set up the backup of volume `volume1` by entering the path `/volumes/volume1` of
 volume `volume1` of the container under the menu item `Policies` in the input field `enter directory to find or set policy` and creating the policy with the button `Set Policy`.
 To stop the container in the backup process so that no unstable data state of the backup occurs, we must now set up the shutdown and start scripts in the previously
-created policy. To do this, use the `Edit` button of the corresponding policy in the `Policies` menu item. Now enter the script path `container_service1-shutdown.sh` in
-the `Before Snapshot` entry of the `Snapshot Action` menu. For the entry `After Snapshot` enter `container_service1-start.sh` and save the policy with the `Save Policy` button.
+created policy. To do this, use the `Edit` button of the corresponding policy in the `Policies` menu item. Now enter the script path `shutdown.sh` with the contains names as arguments in
+the `Before Snapshot` entry of the `Snapshot Action` menu. For the entry `After Snapshot` enter `start.sh` with the contains names as arguments and save the policy with the `Save Policy` button.
 
 At this point, the Docker volume `volume1` can be backed up. Ideally, set up a scheduled backup in the policy for the path so that a backup is performed automatically.
 
