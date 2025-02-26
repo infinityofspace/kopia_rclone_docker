@@ -1,7 +1,7 @@
 FROM golang:1.22-bullseye AS build-image
 
 # build rclone
-ARG RCLONE_BRANCH=v1.69.0
+ARG RCLONE_BRANCH=v1.69.1
 
 RUN git clone --depth 1 --branch $RCLONE_BRANCH https://github.com/rclone/rclone.git
 RUN cd rclone && CGO_ENABLED=0 make
