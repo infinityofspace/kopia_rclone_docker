@@ -7,7 +7,7 @@ RUN git clone --depth 1 --branch $RCLONE_BRANCH https://github.com/rclone/rclone
 RUN cd rclone && CGO_ENABLED=0 make
 
 # build kopia
-ARG KOPIA_BRANCH=v0.21.1
+ARG KOPIA_BRANCH=v0.22.2
 
 RUN git clone --depth 1 --branch $KOPIA_BRANCH https://github.com/kopia/kopia.git
 
