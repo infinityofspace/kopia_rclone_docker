@@ -42,7 +42,7 @@ jobs:
             ghcr.io/${{ secrets.GH_USERNAME }}/kopia_rclone_docker:nightly
           platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
           file: Dockerfile
 
       - name: Build and push without ui
@@ -53,7 +53,7 @@ jobs:
             ghcr.io/${{ secrets.GH_USERNAME }}/kopia_rclone_docker:nightly-noui
           platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
           file: Dockerfile
           build-args: |
             KOPIA_BUILD_TYPE=noui
