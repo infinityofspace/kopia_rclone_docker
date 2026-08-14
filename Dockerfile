@@ -1,4 +1,4 @@
-FROM golang:1.25-bookworm AS build-image
+FROM golang:1.26-trixie AS build-image
 
 # build rclone
 ARG RCLONE_BRANCH=v1.75.0
@@ -18,7 +18,7 @@ RUN chmod +x kopia/build_kopia.sh
 RUN cd kopia && ./build_kopia.sh
 
 
-FROM alpine:3.22
+FROM alpine:3.24
 
 COPY --from=build-image /go/rclone/rclone /usr/bin/
 COPY --from=build-image /go/bin/kopia /usr/bin/
