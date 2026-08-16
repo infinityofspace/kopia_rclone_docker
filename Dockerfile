@@ -1,4 +1,4 @@
-FROM golang:1.26-trixie AS build-image
+FROM golang:1.26-bookworm AS build-image
 
 # build rclone
 ARG RCLONE_BRANCH=v1.75.0
